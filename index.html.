@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+ content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<title>TBOT ASIAN</title>
+
+<style>
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  margin: 0;
+  padding: 20px;
+  background: #101010;
+  color: white;
+  font-family: Arial, sans-serif;
+}
+
+.container {
+  max-width: 440px;
+  margin: 15px auto;
+  background: #1c1c1c;
+  border: 1px solid #353535;
+  border-radius: 18px;
+  padding: 22px;
+  box-shadow: 0 8px 30px #0008;
+}
+
+.header {
+  text-align: center;
+  border-bottom: 1px solid #393939;
+  padding-bottom: 18px;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 30px;
+  letter-spacing: 2px;
+}
+
+.header p {
+  color: #999;
+  font-size: 12px;
+  letter-spacing: 2px;
+}
+
+.status {
+  margin: 20px 0;
+  padding: 13px;
+  text-align: center;
+  background: #292929;
+  border-radius: 10px;
+  font-weight: bold;
+}
+
+.status.on {
+  color: #55ff9b;
+  border: 1px solid #26884f;
+}
+
+.status.off {
+  color: #ff6262;
+  border: 1px solid #733333;
+}
+
+.section {
+  margin: 22px 0;
+}
+
+.label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.label-row label {
+  font-size: 15px;
+  font-weight: bold;
+}
+
+.value {
+  color: #53e88c;
+  font-weight: bold;
+}
+
+input[type="range"] {
+  width: 100%;
+  accent-color: #35d979;
+  cursor: pointer;
+}
+
+.range-labels {
+  display: flex;
+  justify-content: space-between;
+  color: #888;
+  font-size: 11px;
+  margin-top: 8px;
+}
+
+button {
+  width: 100%;
+  min-height: 52px;
+  margin-top: 12px;
+  border: 0;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: bold;
+  color: white;
+  cursor: pointer;
+}
+
+#toggle {
+  background: #178a4c;
+}
+
+#toggle.active {
+  background: #b52e37;
+}
+
+.secondary {
+  background: #303030;
+  border: 1px solid #444;
+}
+
+.note {
+  color: #999;
+  font-size: 12px;
+  line-height: 1.6;
+  text-align: center;
+  margin-top: 20px;
+}
+
+.footer {
+  text-align: center;
+  font-size: 11px;
+  color: #666;
+  margin-top: 22px;
+}
+
+/* SMALL CENTER NOTIFICATION */
+.tbot-notification {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.5);
+  background: #FFFFFF;
+  color: #55ff9b;
+  border: 1px solid #35d979;
+  border-radius: 8px;
+  padding: 9px 16px;
+  font-size: 14px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  box-shadow: 0 3px 12px #000000;
+  z-index: 9999;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s, transform 0.2s;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+.tbot-notification.show {
+  opacity: 0.8;
+  visibility: visible;
+  transform: translate(-50%, -50%) scale(0.3);
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <div class="header">
+    <h1>TBOT ASIAN</h1>
+    <p>ASIAN SUPPORTED</p>
+  </div>
+
+  <div id="status" class="status off">
+    ASIAN: OFF
+  </div>
+
+  <div class="section">
+    <div class="label-row">
+      <label for="cps">Click Speed</label>
+      <span class="value">
+        <span id="cpsValue">40</span> CPS
+      </span>
+    </div>
+
+    <input id="cps" type="range"
+      min="40" max="100" value="40">
+
+    <div class="range-labels">
+      <span>40 CPS</span>
+      <span>70 CPS</span>
+      <span>100 CPS</span>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="label-row">
+      <label for="recoil">Recoil Setting</label>
+      <span class="value">
+        <span id="recoilValue">0</span> px
+      </span>
+    </div>
+
+    <input id="recoil" type="range"
+      min="0" max="10" value="0">
+
+    <div class="range-labels">
+      <span>0 px</span>
+      <span>5 px</span>
+      <span>10 px</span>
+    </div>
+  </div>
+
+  <button id="toggle">START TBOT</button>
+  <button id="reset" class="secondary">
+    RESET SETTINGS
+  </button>
+
+  <p class="note">
+    Interface preview only. Start/Stop changes the
+    displayed status; it does not control clicks in
+    other apps. Recoil is a setting preview only.
+  </p>
+
+  <div class="footer">
+    MOBILE SUPPORTED
+  </div>
+
+</div>
+
+<!-- SMALL CENTER NOTIFICATION -->
+<div id="tbotNotification" class="tbot-notification">
+  TBOT
+</div>
+
+<script>
+const cps = document.getElementById("cps");
+const cpsValue = document.getElementById("cpsValue");
+const recoil = document.getElementById("recoil");
+const recoilValue = document.getElementById("recoilValue");
+const toggle = document.getElementById("toggle");
+const reset = document.getElementById("reset");
+const status = document.getElementById("status");
+const notification = document.getElementById("tbotNotification");
+
+let enabled = false;
+let notificationTimer;
+
+function showTbotNotification(message, isOn) {
+  notification.textContent = message;
+
+  notification.style.color =
+    isOn ? "#55ff9b" : "#ff6262";
+
+  notification.style.borderColor =
+    isOn ? "#35d979" : "#b52e37";
+
+  notification.classList.add("show");
+
+  clearTimeout(notificationTimer);
+
+  notificationTimer = setTimeout(function() {
+    notification.classList.remove("show");
+  }, 1500);
+}
+
+cps.addEventListener("input", function() {
+  cpsValue.textContent = cps.value;
+});
+
+recoil.addEventListener("input", function() {
+  recoilValue.textContent = recoil.value;
+});
+
+toggle.addEventListener("click", function() {
+  enabled = !enabled;
+
+  if (enabled) {
+    status.textContent = "ASIAN: ON";
+    status.className = "status on";
+    toggle.textContent = "STOP TBOT";
+    toggle.classList.add("active");
+  } else {
+    status.textContent = "ASIAN: OFF";
+    status.className = "status off";
+    toggle.textContent = "START TBOT";
+    toggle.classList.remove("active");
+  }
+
+  showTbotNotification(
+    enabled ? "ASIAN ON" : "ASIAN OFF",
+    enabled
+  );
+});
+
+reset.addEventListener("click", function() {
+  cps.value = 40;
+  recoil.value = 0;
+
+  cpsValue.textContent = "40";
+  recoilValue.textContent = "0";
+
+  enabled = false;
+  status.textContent = "ASIAN: OFF";
+  status.className = "status off";
+  toggle.textContent = "START TBOT";
+  toggle.classList.remove("active");
+
+  showTbotNotification("TBOT RESET", false);
+});
+</script>
+
+</body>
+</html>
